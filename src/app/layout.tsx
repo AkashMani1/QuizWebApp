@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "QuizFlow — Premium Interactive Quiz Platform",
+  title: "QuizNova — Premium Interactive Quiz Platform",
   description:
     "Challenge yourself with beautifully crafted quizzes. A premium, smooth, and engaging quiz experience built for the modern web.",
   keywords: ["quiz", "interactive", "learning", "knowledge", "trivia"],
-  authors: [{ name: "QuizFlow" }],
+  authors: [{ name: "QuizNova" }],
   openGraph: {
-    title: "QuizFlow — Premium Interactive Quiz Platform",
+    title: "QuizNova — Premium Interactive Quiz Platform",
     description: "Challenge yourself with beautifully crafted quizzes.",
     type: "website",
   },
