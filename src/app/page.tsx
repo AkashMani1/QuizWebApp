@@ -9,8 +9,8 @@ import { StaticActiveQuiz } from "@/components/StaticActiveQuiz";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-type TabKey = "dashboard" | "quizzes" | "leaderboard" | "analytics";
-type AppView = { kind: "tabs"; activeTab: TabKey } | { kind: "live" } | { kind: "static"; quiz: Quiz };
+type TabKey = "dashboard" | "arena" | "quizzes" | "leaderboard" | "analytics";
+type AppView = { kind: "tabs"; activeTab: TabKey } | { kind: "static"; quiz: Quiz };
 
 interface UserProfile {
   name: string;
@@ -43,6 +43,11 @@ const Icons = {
   Quizzes: () => (
     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+    </svg>
+  ),
+  Arena: () => (
+    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
     </svg>
   ),
   Leaderboard: () => (
@@ -150,23 +155,7 @@ export default function Home() {
     );
   }
 
-  // ── Live Trivia ─────────────────────────────────────────────────────────────
-  if (view.kind === "live") {
-    return (
-      <AnimatePresence mode="wait">
-        <motion.div
-          key="live"
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.97 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="min-h-screen bg-zinc-950"
-        >
-          <ActiveQuiz onExit={() => setView({ kind: "tabs", activeTab: "dashboard" })} />
-        </motion.div>
-      </AnimatePresence>
-    );
-  }
+  // ── Live Trivia removed, now rendered as a tab ──────────────────────────────
 
   // ── Static quiz ─────────────────────────────────────────────────────────────
   if (view.kind === "static") {
@@ -192,6 +181,8 @@ export default function Home() {
     switch (view.activeTab) {
       case "dashboard":
         return <DashboardTab setView={setView} profile={profile} />;
+      case "arena":
+        return <ActiveQuiz onExit={() => setView({ kind: "tabs", activeTab: "dashboard" })} />;
       case "quizzes":
         return <QuizzesTab setView={setView} />;
       case "leaderboard":
@@ -221,6 +212,7 @@ export default function Home() {
         <nav className="flex-1 p-4 space-y-1">
           {[
             { id: "dashboard", label: "Dashboard", icon: Icons.Dashboard },
+            { id: "arena", label: "Live Arena", icon: Icons.Arena },
             { id: "quizzes", label: "Mock Tests", icon: Icons.Quizzes },
             { id: "leaderboard", label: "Leaderboard", icon: Icons.Leaderboard },
             { id: "analytics", label: "Analytics", icon: Icons.Analytics },
@@ -285,6 +277,7 @@ export default function Home() {
         <div className="md:hidden flex overflow-x-auto p-4 gap-2 border-b border-white/10 bg-zinc-950/80 backdrop-blur sticky top-[65px] z-20 scrollbar-none">
            {[
             { id: "dashboard", label: "Dashboard" },
+            { id: "arena", label: "Live Arena" },
             { id: "quizzes", label: "Mock Tests" },
             { id: "leaderboard", label: "Leaderboard" },
             { id: "analytics", label: "Analytics" },
@@ -618,7 +611,7 @@ function DashboardTab({ setView, profile }: DashboardTabProps) {
             </p>
           </div>
           <button
-            onClick={() => setView({ kind: "live" })}
+            onClick={() => setView({ kind: "tabs", activeTab: "arena" })}
             className="w-full py-2.5 rounded-xl bg-indigo-600 group-hover:bg-indigo-500 text-white font-bold text-xs tracking-wide transition-all shadow-[0_0_15px_rgba(99,102,241,0.2)]"
           >
             JOIN ARENA 🌐
