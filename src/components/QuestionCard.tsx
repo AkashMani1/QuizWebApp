@@ -21,7 +21,7 @@ interface AnswerOptionProps {
 const OPTION_LABELS = ["A", "B", "C", "D"];
 
 /** Milliseconds of visual feedback shown before sliding to next question */
-const FEEDBACK_DELAY_MS = 800;
+const FEEDBACK_DELAY_MS = 3000;
 
 // ─── AnswerOption ─────────────────────────────────────────────────────────────
 
