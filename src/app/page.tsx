@@ -28,6 +28,8 @@ interface Leader {
   avatar: string;
   isYou?: boolean;
   skills: number[]; // DSA, DBMS, OS, Cloud, Java
+  streak?: number;
+  tier?: string;
 }
 
 // ─── Icons ───────────────────────────────────────────────────────────────────
@@ -56,6 +58,27 @@ const Icons = {
   Edit: () => (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+    </svg>
+  ),
+  Lock: ({ className = "w-4 h-4" }: { className?: string }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    </svg>
+  ),
+  Fire: ({ className = "w-4 h-4" }: { className?: string }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.879 16.121A3 3 0 1012.015 11L11 14H9c0 .768.293 1.536.879 2.121z" />
+    </svg>
+  ),
+  Shield: ({ className = "w-4 h-4" }: { className?: string }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+    </svg>
+  ),
+  Crown: ({ className = "w-4 h-4" }: { className?: string }) => (
+    <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
     </svg>
   )
 };
@@ -335,8 +358,8 @@ export default function Home() {
 function ProfileEditorForm({ profile, onSave }: { profile: UserProfile; onSave: (updated: UserProfile) => void }) {
   const [name, setName] = useState(profile.name);
   const [role, setRole] = useState(profile.role);
-  const [score, setScore] = useState(profile.score);
-  const [accuracy, setAccuracy] = useState(profile.accuracy);
+  const score = profile.score;
+  const accuracy = profile.accuracy;
 
   const getInitials = (val: string) => {
     return val
@@ -355,8 +378,8 @@ function ProfileEditorForm({ profile, onSave }: { profile: UserProfile; onSave: 
       name,
       role: role || "CS Undergrad",
       avatar: getInitials(name),
-      score: score || 0,
-      accuracy: accuracy.endsWith("%") ? accuracy : `${accuracy}%`
+      score,
+      accuracy
     });
   };
 
@@ -385,25 +408,39 @@ function ProfileEditorForm({ profile, onSave }: { profile: UserProfile; onSave: 
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-xs font-semibold text-zinc-400 block mb-1.5">Placement Score</label>
+          <label className="text-xs font-semibold text-zinc-400 block mb-1.5 flex items-center justify-between">
+            Placement Score
+            <span className="text-[9px] bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-zinc-500 flex items-center gap-1 font-bold">
+              <Icons.Lock className="w-2.5 h-2.5" /> AUTO-LOCKED
+            </span>
+          </label>
           <input
             type="number"
-            min={0}
-            max={50000}
             value={score}
-            onChange={(e) => setScore(parseInt(e.target.value, 10) || 0)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm font-mono text-center focus:outline-none focus:border-indigo-500 text-white transition-all"
+            readOnly
+            disabled
+            className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-2.5 text-sm font-mono text-center text-zinc-500 cursor-not-allowed shadow-inner"
           />
         </div>
         <div>
-          <label className="text-xs font-semibold text-zinc-400 block mb-1.5">Accuracy Rate</label>
+          <label className="text-xs font-semibold text-zinc-400 block mb-1.5 flex items-center justify-between">
+            Accuracy Rate
+            <span className="text-[9px] bg-white/5 border border-white/10 px-1.5 py-0.5 rounded text-zinc-500 flex items-center gap-1 font-bold">
+              <Icons.Lock className="w-2.5 h-2.5" /> AUTO-LOCKED
+            </span>
+          </label>
           <input
             type="text"
             value={accuracy}
-            onChange={(e) => setAccuracy(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm font-mono text-center focus:outline-none focus:border-indigo-500 text-white transition-all"
+            readOnly
+            disabled
+            className="w-full bg-black/40 border border-white/5 rounded-xl px-4 py-2.5 text-sm font-mono text-center text-zinc-500 cursor-not-allowed shadow-inner"
           />
         </div>
+      </div>
+      
+      <div className="text-[10px] text-zinc-500 text-center px-2 py-1 leading-relaxed">
+        Scores & accuracy are live-calculated based on diagnostic tests to maintain global leaderboard integrity.
       </div>
 
       <div className="pt-4 border-t border-white/10 flex gap-3">
@@ -696,18 +733,27 @@ function LeaderboardTab({ profile }: { profile: UserProfile }) {
   const [activeFilter, setActiveFilter] = useState<"all" | "top3" | "you">("all");
 
   const baseLeaders: Leader[] = [
-    { rank: 1, name: "Alice Chen", score: 9850, accuracy: "96%", avatar: "AC", skills: [90, 95, 88, 85, 75] },
-    { rank: 2, name: "Rahul Sharma", score: 9240, accuracy: "94%", avatar: "RS", skills: [85, 90, 80, 75, 85] },
-    { rank: 3, name: "Emily Watson", score: 8900, accuracy: "91%", avatar: "EW", skills: [80, 85, 95, 70, 65] },
-    { rank: 4, name: "David Kim", score: 8450, accuracy: "89%", avatar: "DK", skills: [75, 80, 70, 90, 80] },
-    { rank: 5, name: profile.name, score: profile.score, accuracy: profile.accuracy, avatar: profile.avatar, isYou: true, skills: [85, 72, 90, 65, 40] },
-    { rank: 6, name: "Michael O.", score: 7900, accuracy: "85%", avatar: "MO", skills: [70, 75, 85, 60, 50] },
-    { rank: 7, name: "Sarah Connor", score: 7650, accuracy: "81%", avatar: "SC", skills: [65, 70, 60, 85, 70] },
+    { rank: 1, name: "Alice Chen", score: 9850, accuracy: "96%", avatar: "AC", skills: [90, 95, 88, 85, 75], streak: 12 },
+    { rank: 2, name: "Rahul Sharma", score: 9240, accuracy: "94%", avatar: "RS", skills: [85, 90, 80, 75, 85], streak: 5 },
+    { rank: 3, name: "Emily Watson", score: 8900, accuracy: "91%", avatar: "EW", skills: [80, 85, 95, 70, 65], streak: 8 },
+    { rank: 4, name: "David Kim", score: 8450, accuracy: "89%", avatar: "DK", skills: [75, 80, 70, 90, 80], streak: 3 },
+    { rank: 5, name: profile.name, score: profile.score, accuracy: profile.accuracy, avatar: profile.avatar, isYou: true, skills: [85, 72, 90, 65, 40], streak: 2 },
+    { rank: 6, name: "Michael O.", score: 7900, accuracy: "85%", avatar: "MO", skills: [70, 75, 85, 60, 50], streak: 0 },
+    { rank: 7, name: "Sarah Connor", score: 7650, accuracy: "81%", avatar: "SC", skills: [65, 70, 60, 85, 70], streak: 1 },
   ];
 
   const sortedLeaders = [...baseLeaders]
     .sort((a, b) => b.score - a.score)
     .map((leader, i) => ({ ...leader, rank: i + 1 }));
+
+  const getTier = (score: number) => {
+    if (score >= 9500) return { name: "Grandmaster", color: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/30", icon: "👑" };
+    if (score >= 9000) return { name: "Master", color: "text-purple-400", bg: "bg-purple-500/10", border: "border-purple-500/30", icon: "⚡" };
+    if (score >= 8500) return { name: "Diamond", color: "text-cyan-400", bg: "bg-cyan-500/10", border: "border-cyan-500/30", icon: "💎" };
+    if (score >= 8000) return { name: "Platinum", color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/30", icon: "🔮" };
+    if (score >= 7500) return { name: "Gold", color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/30", icon: "⭐" };
+    return { name: "Silver", color: "text-zinc-400", bg: "bg-zinc-500/10", border: "border-zinc-500/30", icon: "🛡️" };
+  };
 
   useEffect(() => {
     if (!selectedLeader) {
@@ -729,11 +775,21 @@ function LeaderboardTab({ profile }: { profile: UserProfile }) {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent">
-          Leaderboard
-        </h1>
-        <p className="text-zinc-400 text-sm mt-1">Diagnostic placement scoring and live comparison matrices.</p>
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-white via-zinc-200 to-zinc-400 bg-clip-text text-transparent flex items-center gap-3">
+            Global Rankings <Icons.Crown className="w-8 h-8 text-amber-400" />
+          </h1>
+          <p className="text-zinc-400 text-sm mt-1">Gamified placement scoring and competitive live matrices.</p>
+        </div>
+        <div className="flex gap-4">
+          <div className="bg-white/5 border border-white/10 px-4 py-2 rounded-2xl backdrop-blur-xl flex flex-col items-center">
+            <span className="text-[10px] uppercase text-zinc-500 font-bold">Your Tier</span>
+            <span className={`text-sm font-black flex items-center gap-1.5 ${getTier(profile.score).color}`}>
+              {getTier(profile.score).icon} {getTier(profile.score).name}
+            </span>
+          </div>
+        </div>
       </header>
 
       {/* Dynamic Filter Panels */}
@@ -749,8 +805,8 @@ function LeaderboardTab({ profile }: { profile: UserProfile }) {
               onClick={() => setActiveFilter(btn.id as any)}
               className={`px-3 py-1.5 rounded-lg text-xs md:text-sm font-medium transition-all ${
                 activeFilter === btn.id
-                  ? "bg-indigo-600 text-white shadow-md"
-                  : "text-zinc-400 hover:text-zinc-200"
+                  ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20"
+                  : "text-zinc-400 hover:text-zinc-200 hover:bg-white/5"
               }`}
             >
               {btn.label}
@@ -758,15 +814,15 @@ function LeaderboardTab({ profile }: { profile: UserProfile }) {
           ))}
         </div>
 
-        <div className="relative">
+        <div className="relative group">
           <input
             type="text"
-            placeholder="Search candidates..."
+            placeholder="Search candidate..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full md:w-64 bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-xs md:text-sm focus:outline-none focus:border-indigo-500 text-white placeholder-zinc-500 transition-colors"
+            className="w-full md:w-64 bg-white/5 border border-white/10 rounded-xl px-10 py-2.5 text-xs md:text-sm focus:outline-none focus:border-indigo-500 focus:bg-white/10 text-white placeholder-zinc-500 transition-all shadow-inner"
           />
-          <svg className="absolute right-3.5 top-2.5 w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="absolute left-3.5 top-3 w-4 h-4 text-zinc-500 group-focus-within:text-indigo-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
@@ -774,11 +830,16 @@ function LeaderboardTab({ profile }: { profile: UserProfile }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         {/* Interactive Candidate Grid List */}
-        <div className="lg:col-span-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-card p-4">
-          <div className="space-y-2">
+        <div className="lg:col-span-2 bg-gradient-to-br from-white/5 to-transparent backdrop-blur-xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_30px_rgb(0,0,0,0.12)] p-4 relative">
+          {/* Decorative gamification bg */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+          
+          <div className="space-y-2.5 relative z-10">
             <AnimatePresence>
               {filteredLeaders.map((leader) => {
                 const isSelected = selectedLeader?.name === leader.name;
+                const tierInfo = getTier(leader.score);
+                
                 return (
                   <motion.div
                     key={leader.name}
@@ -787,44 +848,67 @@ function LeaderboardTab({ profile }: { profile: UserProfile }) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     onClick={() => setSelectedLeader(leader)}
-                    className={`flex items-center justify-between p-3.5 rounded-2xl cursor-pointer transition-all border ${
+                    className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-2xl cursor-pointer transition-all border group ${
                       isSelected 
-                        ? "bg-indigo-600/10 border-indigo-500/40 shadow-inner" 
+                        ? "bg-indigo-900/40 border-indigo-500/50 shadow-[0_0_20px_rgba(99,102,241,0.15)]" 
                         : leader.isYou 
-                          ? "bg-teal-500/5 border-teal-500/20 hover:border-teal-500/40"
-                          : "bg-white/2 hover:bg-white/4 border-white/5 hover:border-white/10"
+                          ? "bg-teal-900/20 border-teal-500/30 hover:border-teal-400/50"
+                          : "bg-black/20 hover:bg-white/5 border-white/5 hover:border-white/20"
                     }`}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border ${
+                    <div className="flex items-center gap-4">
+                      {/* Rank Badge */}
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black text-sm border shadow-inner ${
                         leader.rank === 1 
-                          ? "bg-amber-500/20 border-amber-500/40 text-amber-400" 
+                          ? "bg-gradient-to-br from-amber-300 to-amber-600 border-amber-400/50 text-amber-950 shadow-[0_0_15px_rgba(251,191,36,0.3)]" 
                           : leader.rank === 2 
-                            ? "bg-zinc-300/20 border-zinc-300/40 text-zinc-200" 
+                            ? "bg-gradient-to-br from-zinc-300 to-zinc-500 border-zinc-400/50 text-zinc-900" 
                             : leader.rank === 3 
-                              ? "bg-amber-700/20 border-amber-700/40 text-amber-500" 
-                              : "bg-zinc-950 border-white/5 text-zinc-500"
+                              ? "bg-gradient-to-br from-amber-700 to-amber-900 border-amber-600/50 text-white" 
+                              : "bg-zinc-900 border-zinc-800 text-zinc-400 group-hover:text-zinc-300"
                       }`}>
-                        {leader.rank === 1 ? "🥇" : leader.rank === 2 ? "🥈" : leader.rank === 3 ? "🥉" : `#${leader.rank}`}
+                        {leader.rank === 1 ? "1" : leader.rank === 2 ? "2" : leader.rank === 3 ? "3" : leader.rank}
                       </div>
 
-                      <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center font-bold text-xs uppercase text-zinc-300">
+                      {/* Avatar */}
+                      <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-white/5 to-white/10 border border-white/10 flex items-center justify-center font-black text-sm uppercase text-zinc-300 shadow-md">
                         {leader.avatar.slice(0, 2)}
                       </div>
 
+                      {/* Name & Title */}
                       <div>
-                        <span className={`font-semibold text-sm block ${
-                          leader.isYou ? "text-teal-400" : "text-zinc-200"
+                        <span className={`font-bold text-base flex items-center gap-2 ${
+                          leader.isYou ? "text-teal-400" : "text-white"
                         }`}>
-                          {leader.name} {leader.isYou && <span className="text-[10px] bg-teal-500/10 text-teal-400 px-1.5 py-0.5 rounded-full font-medium ml-1">You</span>}
+                          {leader.name} 
+                          {leader.isYou && <span className="text-[9px] uppercase tracking-wider bg-teal-500/20 text-teal-300 px-2 py-0.5 rounded-full font-black border border-teal-500/30">You</span>}
+                          {leader.rank === 1 && <span className="text-lg">👑</span>}
                         </span>
-                        <span className="text-[10px] text-zinc-500 font-medium">Diagnostic score rating</span>
+                        
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded-md font-bold uppercase tracking-wider border ${tierInfo.bg} ${tierInfo.color} ${tierInfo.border}`}>
+                            {tierInfo.icon} {tierInfo.name}
+                          </span>
+                          {(leader.streak ?? 0) >= 3 && (
+                            <span className="flex items-center gap-0.5 text-[10px] text-orange-400 font-bold bg-orange-500/10 px-1.5 py-0.5 rounded-md border border-orange-500/20">
+                              <Icons.Fire className="w-3 h-3" /> {leader.streak} Win Streak
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <span className="font-mono text-sm text-zinc-200 block font-bold">{leader.score.toLocaleString()}</span>
-                      <span className="text-[10px] text-teal-400 font-semibold">{leader.accuracy} Accuracy</span>
+                    <div className="text-right mt-3 sm:mt-0 flex flex-row sm:flex-col justify-between sm:justify-center items-center sm:items-end">
+                      <div className="flex flex-col items-end">
+                        <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mb-0.5">Rating</span>
+                        <span className="font-mono text-xl text-white font-black tracking-tight drop-shadow-[0_2px_10px_rgba(255,255,255,0.1)]">
+                          {leader.score.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1.5 mt-1">
+                        <Icons.Shield className="w-3 h-3 text-teal-400" />
+                        <span className="text-xs text-teal-400 font-bold">{leader.accuracy} Accuracy</span>
+                      </div>
                     </div>
                   </motion.div>
                 );
