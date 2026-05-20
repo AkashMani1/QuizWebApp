@@ -274,7 +274,7 @@ export default function Home() {
         </div>
 
         {/* Mobile Nav Scroll */}
-        <div className="md:hidden flex overflow-x-auto p-4 gap-2 border-b border-white/10 bg-zinc-950/80 backdrop-blur sticky top-[65px] z-20 scrollbar-none">
+        <div className="md:hidden flex items-center overflow-x-auto p-4 gap-2 border-b border-white/10 bg-zinc-950/80 backdrop-blur sticky top-[65px] z-20 scrollbar-none">
            {[
             { id: "dashboard", label: "Dashboard" },
             { id: "arena", label: "Live Arena" },
